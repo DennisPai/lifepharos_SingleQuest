@@ -7,19 +7,31 @@ alwaysApply: true
 
 ## 📋 文檔管理（必須遵守）
 
-**規則**：
-- **請優先更新既有的文檔，如需添加額外文檔前須要先詢問才能新增**
+**嚴格規則**：
+- **禁止新增任何文檔，只能更新既有文檔**
+- **所有需要記錄的資訊必須整合到現有文檔中**
 - 所有文檔更新必須記錄在 `docs/WORKLOG.md` 中
 - 保持文檔的繁體中文撰寫
 
+**既有文檔清單**：
+- `README.md` - 專案總覽
+- `docs/DESIGN.md` - 系統架構設計
+- `docs/API.md` - API 文檔
+- `docs/DEPLOYMENT.md` - 部署指南
+- `docs/TESTING.md` - 測試指南
+- `docs/N8N_EXPANSION.md` - n8n 工作流擴充
+- `docs/SUMMARY.md` - 專案摘要
+- `docs/WORKLOG.md` - 工作日誌
+
 **範例**：
 ```markdown
-❌ BAD - 直接創建新文檔
-創建 docs/NEW_FEATURE.md...
+❌ BAD - 創建新文檔
+創建 NEXT_STEPS.md...
+創建 QUICKSTART.md...
 
-✅ GOOD - 先詢問再創建
-"我注意到需要記錄新功能，是否應該更新現有的 docs/DESIGN.md，
-還是需要建立新文檔？"
+✅ GOOD - 更新既有文檔
+更新 docs/DEPLOYMENT.md 添加部署步驟...
+更新 README.md 添加快速開始指南...
 ```
 
 ## 💻 程式碼風格

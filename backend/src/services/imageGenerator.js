@@ -7,9 +7,9 @@ const logger = require('../utils/logger');
 class ImageGenerator {
   constructor() {
     // 畫布配置
-    this.scale = 10; // 高解析度
+    this.scale = 5; // 優化後的解析度（降低文件大小）
     this.canvasSize = 500; // 邏輯尺寸
-    this.actualSize = this.canvasSize * this.scale; // 實際尺寸 5000x5000
+    this.actualSize = this.canvasSize * this.scale; // 實際尺寸 2500x2500
 
     // 顏色配置
     this.colors = {
@@ -69,9 +69,9 @@ class ImageGenerator {
       // 3. 繪製棋子
       this.drawPieces(ctx, pieces);
 
-      // 4. 返回 Buffer
-      const buffer = canvas.toBuffer('image/png');
-      logger.success('Image generated successfully');
+      // 4. 返回 Buffer（使用 JPEG 格式降低文件大小）
+      const buffer = canvas.toBuffer('image/jpeg', { quality: 0.85 });
+      logger.success('Image generated successfully (JPEG format, optimized size)');
       
       return buffer;
 

@@ -117,8 +117,8 @@ const App = {
       input.addEventListener('input', () => {
         this.validateNumberInputs();
         
-        // 自動跳到下一個輸入框
-        if (input.value && index < numberInputs.length - 1) {
+        // 自動跳到下一個輸入框（當輸入2位數字時）
+        if (input.value && input.value.length >= 2 && index < numberInputs.length - 1) {
           numberInputs[index + 1].focus();
         }
       });

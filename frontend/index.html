@@ -51,37 +51,37 @@
                 <h1 class="page-title">🎲 請選擇 5 個數字</h1>
                 <div class="divider"></div>
             </div>
-            <div class="page-content">
-                <p class="meditation-text" style="text-align: center; margin-bottom: 10px; color: #333; font-size: 16px;">
+            <div class="page-content" style="gap: 8px;">
+                <p class="meditation-text" style="text-align: center; margin-bottom: 3px; color: #333; font-size: 15px; line-height: 1.3;">
                     深呼吸三次，讓自己沉靜下來
                 </p>
-                <p class="prayer-text" style="text-align: center; margin-bottom: 20px; color: #3B6E98; font-size: 15px; font-weight: bold;">
+                <p class="prayer-text" style="text-align: center; margin-bottom: 8px; color: #3B6E98; font-size: 14px; font-weight: bold; line-height: 1.3;">
                     心裡默念：指導靈/神明，請問<span id="question-reminder"></span>
                 </p>
                 
                 <!-- 顯示棋盤圖片 -->
-                <div class="chessboard-container" style="text-align: center; margin: 20px 0;">
+                <div class="chessboard-container" style="text-align: center; margin: 8px 0;">
                     <img src="https://fateforge.lifepharos.com/wp-content/uploads/2025/02/象棋數字盤-e1738425815689.jpg" 
                          alt="象棋數字盤" 
                          class="chessboard-image"
-                         style="width: 100%; max-width: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                         style="width: 100%; max-width: 350px; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
                 </div>
                 
-                <p class="instruction-text" style="text-align: center; font-size: 14px; color: #666; margin-bottom: 15px;">
+                <p class="instruction-text" style="text-align: center; font-size: 13px; color: #666; margin-bottom: 8px; line-height: 1.3;">
                     請選擇你想抽取的棋子的位置（填數字）
                 </p>
                 
-                <div class="number-inputs-container" style="display: flex; justify-content: space-between; gap: 8px; margin-bottom: 15px;">
-                    <input type="number" id="number-1" class="number-input" placeholder="第1個" min="1" max="32" style="flex: 1; padding: 10px; text-align: center; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
-                    <input type="number" id="number-2" class="number-input" placeholder="第2個" min="1" max="32" style="flex: 1; padding: 10px; text-align: center; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
-                    <input type="number" id="number-3" class="number-input" placeholder="第3個" min="1" max="32" style="flex: 1; padding: 10px; text-align: center; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
-                    <input type="number" id="number-4" class="number-input" placeholder="第4個" min="1" max="32" style="flex: 1; padding: 10px; text-align: center; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
-                    <input type="number" id="number-5" class="number-input" placeholder="第5個" min="1" max="32" style="flex: 1; padding: 10px; text-align: center; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+                <div class="number-inputs-container" style="display: flex; justify-content: space-between; gap: 4px; margin-bottom: 8px;">
+                    <input type="number" id="number-1" class="number-input" placeholder="第1" min="1" max="32" inputmode="numeric" style="flex: 1; min-width: 0; padding: 8px 2px; text-align: center; border: 2px solid #ddd; border-radius: 6px; font-size: 16px;">
+                    <input type="number" id="number-2" class="number-input" placeholder="第2" min="1" max="32" inputmode="numeric" style="flex: 1; min-width: 0; padding: 8px 2px; text-align: center; border: 2px solid #ddd; border-radius: 6px; font-size: 16px;">
+                    <input type="number" id="number-3" class="number-input" placeholder="第3" min="1" max="32" inputmode="numeric" style="flex: 1; min-width: 0; padding: 8px 2px; text-align: center; border: 2px solid #ddd; border-radius: 6px; font-size: 16px;">
+                    <input type="number" id="number-4" class="number-input" placeholder="第4" min="1" max="32" inputmode="numeric" style="flex: 1; min-width: 0; padding: 8px 2px; text-align: center; border: 2px solid #ddd; border-radius: 6px; font-size: 16px;">
+                    <input type="number" id="number-5" class="number-input" placeholder="第5" min="1" max="32" inputmode="numeric" style="flex: 1; min-width: 0; padding: 8px 2px; text-align: center; border: 2px solid #ddd; border-radius: 6px; font-size: 16px;">
                 </div>
                 
-                <div id="number-validation" class="validation-message"></div>
+                <div id="number-validation" class="validation-message" style="margin-bottom: 8px;"></div>
 
-                <div class="button-group">
+                <div class="button-group" style="gap: 10px;">
                     <button id="btn-back-numbers" class="btn btn-secondary">返回</button>
                     <button id="btn-submit-divination" class="btn btn-primary" disabled>開始抽卦</button>
                 </div>

@@ -4,7 +4,7 @@ const CONFIG = {
   LIFF_ID: '2008987238-9DfMVogB',
   
   // 後端 API Base URL
-  API_BASE_URL: 'https://lifepharos-singlequest-backend.zeabur.app'
+  API_BASE_URL: 'https://lifepharos-singlequest-backend.zeabur.app',
   
   // 問題長度限制
   MAX_QUESTION_LENGTH: 30,

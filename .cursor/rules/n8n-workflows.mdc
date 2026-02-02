@@ -1,0 +1,110 @@
+---
+description: n8n 工作流開發規範，包含 webhook、Function 節點和 Google Sheets 操作
+globs: n8n_workflows/**/*.json
+alwaysApply: false
+---
+
+# n8n 工作流開發規範
+
+## ✅ 核心原則
+
+1. **每個 webhook 必須包含錯誤處理**
+2. **Function 節點必須包含註解說明**
+3. **避免直接更新 Google Sheets 公式欄位**
+4. **Webhook 路徑使用語義化命名**
+
+## 🔌 Webhook 設定
+
+### 語義化路徑命名
+
+```json
+// ❌ BAD - 使用隨機 UUID
+{
+  "path": "370e0a71-244b-426a-9485-4237f0178e71"
+}
+
+// ✅ GOOD - 使用語義化名稱
+{
+  "path": "get-board"  // 清楚表達用途
+}
+```
+
+## 📝 Function 節點
+
+### 必須包含註解
+
+```javascript
+// ❌ BAD - 沒有註解
+const positions = items[0].json.body.positions;
+return [{ json: { P: positions[0] } }];
+
+// ✅ GOOD - 清楚的註解
+/**
+ * 準備更新資料
+ * 將前端傳來的 positions 陣列對應到 Google Sheets 的 P-T 欄位
+ */
+const positions = items[0].json.body.positions;
+const rowNumber = items[0].json.row;
+
+return [{
+  json: {
+    rowNumber: rowNumber,
+    updates: {
+      'P': positions[0],  // 棋子順序1
+      'Q': positions[1],  // 棋子順序2
+      'R': positions[2],  // 棋子順序3
+      'S': positions[3],  // 棋子順序4
+      'T': positions[4]   // 棋子順序5
+    }
+  }
+}];
+```
+
+## 📊 Google Sheets 操作
+
+### 只更新資料欄位，不動公式欄位
+
+```json
+// ✅ GOOD - 只更新 P-T 欄位
+{
+  "operation": "update",
+  "columns": {
+    "value": {
+      "棋子順序1": "={{ $json.updates.P }}",
+      "棋子順序2": "={{ $json.updates.Q }}"
+    }
+  }
+}
+
+// ❌ BAD - 更新公式欄位
+{
+  "columns": {
+    "value": {
+      "已使用": "TRUE",  // D 欄有公式，不應直接更新
+      "結果": "士、炮、相、帥、士"  // Z 欄有公式，不應直接更新
+    }
+  }
+}
+```
+
+**原因**：
+- 「已使用」欄位（D欄）公式：`=IF(Z13="","")`
+- 「結果」欄位（Z欄）公式：`=IFERROR(U13&"、"&V13&"、"&W13&"、"&X13&"、"&Y13,"")`
+- 直接更新會覆蓋公式，導致邏輯錯誤
+
+### 查詢前驗證 taskId 格式
+
+```javascript
+// ✅ GOOD - Function 節點驗證 taskId
+const taskId = $json.body.taskId;
+
+// 驗證格式：ID{timestamp}
+if (!taskId || !taskId.startsWith('ID')) {
+  return [{
+    json: {
+      success: false,
+      error: 'Invalid task ID format'
+    }
+  }];
+}
+```

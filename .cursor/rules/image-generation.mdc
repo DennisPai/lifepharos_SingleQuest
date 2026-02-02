@@ -1,0 +1,153 @@
+---
+description: 圖片生成規範，包含 Canvas 操作和品牌設計標準
+globs: backend/src/services/imageGenerator.js
+alwaysApply: false
+---
+
+# 圖片生成規範
+
+## 🎨 核心原則
+
+1. **使用高解析度**（10x scale，實際 5000x5000）
+2. **字體必須支援繁體中文**
+3. **顏色遵循品牌規範**（#3B6E98、#D2D2D2）
+4. **圖片尺寸固定為 500x500**（邏輯尺寸）
+
+## 📐 Canvas 設定
+
+### 高解析度設定
+
+```javascript
+// ✅ GOOD - 使用 scale 提高解析度
+const scale = 10;
+const canvasSize = 500;
+const canvas = createCanvas(canvasSize * scale, canvasSize * scale);
+const ctx = canvas.getContext('2d');
+ctx.scale(scale, scale);
+
+// 繪製時使用邏輯尺寸
+ctx.fillRect(0, 0, canvasSize, canvasSize);  // 實際繪製 5000x5000
+
+// ❌ BAD - 直接使用低解析度
+const canvas = createCanvas(500, 500);  // 圖片會模糊
+```
+
+## 🎨 品牌配色
+
+### 顏色常數
+
+```javascript
+// ✅ GOOD - 定義顏色常數
+const COLORS = {
+  background: '#D2D2D2',      // 背景灰
+  pieceBackground: '#FFFFFF', // 棋子背景白
+  red: '#FF0000',             // 紅棋
+  black: '#000000',           // 黑棋
+  text: '#000000'             // 文字黑
+};
+
+// ❌ BAD - 硬編碼顏色
+ctx.fillStyle = '#cccccc';  // 不符合品牌規範
+```
+
+### 棋子顏色判斷
+
+```javascript
+// ✅ GOOD - 清楚的棋子分類
+const RED_PIECES = ['帥', '仕', '相', '俥', '傌', '炮', '兵'];
+const BLACK_PIECES = ['將', '士', '象', '車', '馬', '包', '卒'];
+
+const isRed = RED_PIECES.includes(piece.name);
+ctx.strokeStyle = isRed ? COLORS.red : COLORS.black;
+```
+
+## 🔤 字體處理
+
+### 繁體中文字體
+
+```javascript
+// ✅ GOOD - 指定支援繁體中文的字體
+ctx.font = 'bold 50px "Microsoft YaHei", "微軟正黑體", sans-serif';
+
+// ❌ BAD - 不指定字體，可能無法顯示中文
+ctx.font = '50px serif';
+```
+
+### 文字換行處理
+
+```javascript
+// ✅ GOOD - 實作文字換行
+function drawWrappedText(ctx, text, x, y, maxWidth, lineHeight) {
+  const characters = text.split('');
+  let line = '';
+  let yOffset = y;
+
+  for (let i = 0; i < characters.length; i++) {
+    const testLine = line + characters[i];
+    const metrics = ctx.measureText(testLine);
+    
+    if (metrics.width > maxWidth && i > 0) {
+      ctx.fillText(line, x, yOffset);
+      line = characters[i];
+      yOffset += lineHeight;
+    } else {
+      line = testLine;
+    }
+  }
+  
+  ctx.fillText(line, x, yOffset);
+}
+```
+
+## 🎯 棋子繪製
+
+### 十字排列位置
+
+```javascript
+// ✅ GOOD - 清楚的位置定義
+const positions = [
+  { x: 250, y: 300, label: '中' },  // 棋子1（中心）
+  { x: 130, y: 300, label: '左' },  // 棋子2（左側）
+  { x: 370, y: 300, label: '右' },  // 棋子3（右側）
+  { x: 250, y: 180, label: '上' },  // 棋子4（上方）
+  { x: 250, y: 420, label: '下' }   // 棋子5（下方）
+];
+```
+
+### 棋子繪製標準
+
+```javascript
+// ✅ GOOD - 完整的棋子繪製
+function drawPiece(ctx, piece, x, y) {
+  const radius = 45;
+  const isRed = RED_PIECES.includes(piece.name);
+  
+  // 1. 繪製圓形背景
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, 2 * Math.PI);
+  ctx.fillStyle = COLORS.pieceBackground;
+  ctx.fill();
+  
+  // 2. 繪製邊框（3px）
+  ctx.strokeStyle = isRed ? COLORS.red : COLORS.black;
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  
+  // 3. 繪製棋子文字
+  ctx.font = 'bold 50px "Microsoft YaHei", "微軟正黑體", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = isRed ? COLORS.red : COLORS.black;
+  ctx.fillText(piece.name, x, y + 3);  // +3 微調垂直對齊
+}
+```
+
+## 📏 尺寸規格
+
+| 元素 | 邏輯尺寸 | 實際尺寸 | 說明 |
+|------|----------|----------|------|
+| 畫布 | 500x500 | 5000x5000 | scale=10 |
+| 棋子半徑 | 45px | 450px | 圓形 |
+| 棋子邊框 | 3px | 30px | 紅/黑 |
+| 棋子文字 | 50px | 500px | 粗體 |
+| 問題文字 | 35px | 350px | 粗體 |

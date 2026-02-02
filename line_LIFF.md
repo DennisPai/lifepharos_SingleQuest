@@ -1,0 +1,2 @@
+LIFF_ID = 2008987238-9DfMVogB
+LIFF_URL = https://liff.line.me/2008987238-9DfMVogB

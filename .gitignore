@@ -1,0 +1,63 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+*.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+logs/
+*.log
+
+# Build outputs
+dist/
+build/
+*.tgz
+
+# Temporary files
+tmp/
+temp/
+.cache/
+
+# OS
+Thumbs.db
+desktop.ini
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Zeabur
+.zeabur/
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Local test data
+TEST_*
+test-data/
+
+# n8n workflows (不推送到 GitHub)
+n8n_workflows/
+
+# Cursor 相關（不推送計劃文件）
+.cursor/plans/
+
+# 終端機記錄
+terminals/

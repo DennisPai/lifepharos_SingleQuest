@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>象棋卜卦 - 單一問題抽卦</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- LIFF SDK -->
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</head>
+<body>
+    <div id="app" class="container">
+        <!-- 檢查頁面 -->
+        <div id="page-checking" class="page" style="display: none;">
+            <div class="loading-container">
+                <div class="spinner"></div>
+                <p class="loading-text">正在檢查資料...</p>
+            </div>
+        </div>
+
+        <!-- 輸入問題頁面 -->
+        <div id="page-input-question" class="page" style="display: none;">
+            <div class="page-header">
+                <h1 class="page-title">📝 請輸入您的問題</h1>
+                <div class="divider"></div>
+            </div>
+            <div class="page-content">
+                <textarea
+                    id="input-question"
+                    class="input-field"
+                    placeholder="請輸入您想問的問題..."
+                    maxlength="30"
+                    rows="3"
+                ></textarea>
+                <p class="char-counter">
+                    <span id="char-count">0</span>/30
+                </p>
+                <button id="btn-next-question" class="btn btn-primary" disabled>下一步</button>
+            </div>
+        </div>
+
+        <!-- 輸入數字頁面 -->
+        <div id="page-input-numbers" class="page" style="display: none;">
+            <div class="page-header">
+                <h1 class="page-title">🎲 請選擇 5 個數字</h1>
+                <div class="divider"></div>
+            </div>
+            <div class="page-content">
+                <p class="instruction-text">
+                    請輸入5個數字，用逗號分隔<br>
+                    <span class="example-text">(例如：9,19,21,23,32)</span>
+                </p>
+                <input
+                    type="text"
+                    id="input-numbers"
+                    class="input-field"
+                    placeholder="9,19,21,23,32"
+                />
+                <div id="number-validation" class="validation-message"></div>
+                
+                <!-- 可選：顯示棋盤參考圖 -->
+                <div class="reference-image-container" style="display: none;">
+                    <p class="reference-label">參考棋盤：</p>
+                    <img src="assets/chessboard-reference.jpg" alt="棋盤參考圖" class="reference-image">
+                </div>
+
+                <div class="button-group">
+                    <button id="btn-back-numbers" class="btn btn-secondary">返回</button>
+                    <button id="btn-submit-divination" class="btn btn-primary" disabled>開始抽卦</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 處理中頁面 -->
+        <div id="page-processing" class="page" style="display: none;">
+            <div class="loading-container">
+                <div class="spinner"></div>
+                <p class="loading-text">正在為您排卦...</p>
+                <p class="loading-subtext">請稍候...</p>
+            </div>
+        </div>
+
+        <!-- 結果顯示頁面 -->
+        <div id="page-result" class="page" style="display: none;">
+            <div class="page-header">
+                <h1 class="page-title">✨ 以下是您抽到的卦</h1>
+                <div class="divider"></div>
+            </div>
+            <div class="page-content">
+                <div id="result-pieces" class="pieces-container">
+                    <!-- 棋子將動態插入這裡 -->
+                </div>
+                <div class="result-question">
+                    <p class="question-label">您的問題：</p>
+                    <p id="result-question-text" class="question-text"></p>
+                </div>
+                <p class="result-notice">老師將於24小時內回覆您</p>
+                <button id="btn-close" class="btn btn-primary">完成</button>
+            </div>
+        </div>
+
+        <!-- 已使用頁面 -->
+        <div id="page-already-used" class="page" style="display: none;">
+            <div class="page-header">
+                <h1 class="page-title warning">ℹ️ 該問題您已抽卦</h1>
+                <div class="divider"></div>
+            </div>
+            <div class="page-content">
+                <p class="info-text">以下是您之前的抽卦結果：</p>
+                <div id="previous-pieces" class="pieces-container">
+                    <!-- 之前的棋子將動態插入這裡 -->
+                </div>
+                <div class="result-question">
+                    <p class="question-label">您的問題：</p>
+                    <p id="previous-question-text" class="question-text"></p>
+                </div>
+                <button id="btn-close-used" class="btn btn-primary">回到聊天室</button>
+            </div>
+        </div>
+
+        <!-- 錯誤頁面 -->
+        <div id="page-error" class="page" style="display: none;">
+            <div class="page-content error-content">
+                <div class="error-icon">⚠️</div>
+                <h2 class="error-title">發生錯誤</h2>
+                <p id="error-message" class="error-text"></p>
+                <button id="btn-retry" class="btn btn-secondary">重試</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/liff-init.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+---
+description: LIFF 前端開發規範，包含 JavaScript、HTML 和 CSS 最佳實踐
+globs: frontend/**/*.{js,html,css}
+alwaysApply: false
+---
+
+# LIFF 前端開發規範
+
+## ✅ 核心原則
+
+1. **使用 Vanilla JavaScript**，不引入額外框架（保持輕量）
+2. **響應式設計**，優先考慮手機版面
+3. **所有 LIFF API 呼叫必須包含錯誤處理**
+4. **Loading 狀態必須有視覺提示**
+
+## 🔌 LIFF API 使用
+
+### 正確的錯誤處理
+
+```javascript
+// ❌ BAD - 沒有錯誤處理
+async function initLIFF() {
+  await liff.init({ liffId: CONFIG.LIFF_ID });
+  const userId = liff.getContext().userId;
+}
+
+// ✅ GOOD - 完整的錯誤處理
+async function initLIFF() {
+  try {
+    await liff.init({ liffId: CONFIG.LIFF_ID });
+    
+    if (!liff.isInClient() && !liff.isLoggedIn()) {
+      liff.login();
+      return null;
+    }
+    
+    const context = liff.getContext();
+    if (!context || !context.userId) {
+      throw new Error('無法獲取用戶ID');
+    }
+    
+    return context.userId;
+  } catch (error) {
+    console.error('LIFF 初始化失敗:', error);
+    showError('初始化失敗，請稍後再試');
+    throw error;
+  }
+}
+```
+
+### Loading 狀態
+
+```javascript
+// ✅ GOOD - 顯示 Loading
+function showPage(pageName) {
+  // 隱藏所有頁面
+  document.querySelectorAll('.page').forEach(page => {
+    page.style.display = 'none';
+  });
+  
+  // 顯示目標頁面
+  const targetPage = document.getElementById(`page-${pageName}`);
+  targetPage.style.display = 'flex';
+  targetPage.classList.add('fade-in');
+}
+
+// 使用 Loading
+showPage('processing'); // 顯示 loading 頁面
+await submitData();
+showPage('result'); // 顯示結果
+```
+
+## 📱 響應式設計
+
+### CSS 最佳實踐
+
+```css
+/* ✅ GOOD - 手機優先 */
+.container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* 桌面版（可選） */
+@media (min-width: 768px) {
+  .container {
+    padding: 40px;
+  }
+}
+
+/* ❌ BAD - 固定寬度 */
+.container {
+  width: 500px; /* 手機上會溢出 */
+}
+```
+
+## 🎨 用戶體驗
+
+### 友善的錯誤訊息
+
+```javascript
+// ❌ BAD - 技術性錯誤訊息
+catch (error) {
+  alert(error.message); // "Network request failed"
+}
+
+// ✅ GOOD - 友善的繁體中文訊息
+catch (error) {
+  console.error('API 呼叫失敗:', error);
+  showError('系統暫時無法處理，請稍後再試');
+}
+```
+
+### 即時驗證
+
+```javascript
+// ✅ GOOD - 即時驗證數字輸入
+numbersInput.addEventListener('input', () => {
+  const validation = validateNumbers(numbersInput.value);
+  const validationEl = document.getElementById('number-validation');
+  
+  if (validation.valid) {
+    validationEl.textContent = '✅ 格式正確';
+    validationEl.className = 'validation-message success';
+    submitButton.disabled = false;
+  } else {
+    validationEl.textContent = validation.error || '';
+    validationEl.className = 'validation-message error';
+    submitButton.disabled = true;
+  }
+});
+```
+
+## 🔒 防呆機制
+
+### 防止重複提交
+
+```javascript
+// ✅ GOOD - 提交後禁用按鈕
+async function submitDivination() {
+  const submitButton = document.getElementById('btn-submit');
+  
+  // 禁用按鈕
+  submitButton.disabled = true;
+  
+  try {
+    showPage('processing');
+    const result = await API.submitDivination(data);
+    showPage('result');
+    renderResult(result);
+  } catch (error) {
+    showError(error.message);
+    // 錯誤時重新啟用按鈕
+    submitButton.disabled = false;
+  }
+}
+```

@@ -1,0 +1,133 @@
+---
+description: 安全性、部署和測試規範，適用於整個專案
+alwaysApply: true
+---
+
+# 安全性與部署規範
+
+## 🔐 安全注意事項
+
+### 環境變數必須使用
+
+```javascript
+// ❌ BAD - 硬編碼敏感資訊
+const API_KEY = '179dcdb74c6a4f1540303be93f5d259c';
+
+// ✅ GOOD - 使用環境變數
+const API_KEY = process.env.IMGBB_API_KEY;
+```
+
+### .env 文件管理
+
+```bash
+# ✅ GOOD - .env.example 提供範本
+LINE_CHANNEL_ACCESS_TOKEN=your_token_here
+IMGBB_API_KEY=your_api_key_here
+
+# ✅ GOOD - .gitignore 排除實際環境變數
+.env
+.env.local
+*.env
+```
+
+## 🚀 Zeabur 部署規則
+
+### Root Directory 設定（關鍵）
+
+```yaml
+# ✅ GOOD - 前端服務
+Service Name: frontend
+Root Directory: /frontend
+Framework: Static Site
+
+# ✅ GOOD - 後端服務
+Service Name: backend
+Root Directory: /backend
+Framework: Node.js
+
+# ❌ BAD - 沒有設定 Root Directory
+# 會導致 Zeabur 找不到文件
+```
+
+### 部署前檢查清單
+
+- [ ] 前端 Root Directory = `/frontend`
+- [ ] 後端 Root Directory = `/backend`
+- [ ] 所有環境變數已設定
+- [ ] `NODE_ENV=production`
+- [ ] `.env` 已加入 `.gitignore`
+- [ ] 前端 config.js 已更新 API_BASE_URL
+
+### 部署後立即更新
+
+```javascript
+// ✅ GOOD - 部署後更新流程
+// 1. 部署後端，記錄 URL
+const BACKEND_URL = 'https://backend-abc.zeabur.app';
+
+// 2. 更新前端配置
+// frontend/js/config.js
+API_BASE_URL: 'https://backend-abc.zeabur.app'
+
+// 3. 提交並推送
+git add frontend/js/config.js
+git commit -m "[修改] 更新後端 API URL"
+git push
+
+// 4. 部署前端，記錄 URL
+const FRONTEND_URL = 'https://frontend-xyz.zeabur.app';
+
+// 5. 更新後端環境變數
+FRONTEND_URL=https://frontend-xyz.zeabur.app
+
+// 6. 更新 LINE LIFF Endpoint
+// LINE Developers Console → LIFF → Edit
+Endpoint URL: https://frontend-xyz.zeabur.app
+```
+
+## 🧪 測試規範
+
+### 測試資料標識
+
+```javascript
+// ✅ GOOD - 使用 TEST_ 前綴
+const testTaskId = 'TEST_1234567890123';
+const testUserId = 'Utest123456789abcdef';
+
+// 測試完成後清理
+// 在 Google Sheets 中刪除所有 TEST_ 開頭的資料
+```
+
+### 測試環境使用
+
+```javascript
+// ✅ GOOD - 區分測試和正式環境
+if (taskId.startsWith('TEST_')) {
+  logger.info('測試模式：跳過實際 LINE 推送');
+  return { success: true, test: true };
+}
+```
+
+## 📦 依賴管理
+
+### 後端依賴
+
+```bash
+# ✅ GOOD - 使用最新穩定版本
+npm install express@latest
+npm install canvas@latest
+
+# 更新後記錄在 WORKLOG
+# docs/WORKLOG.md:
+# - 新增 express-rate-limit ^7.4.2 (Rate limiting)
+```
+
+### 前端依賴
+
+```html
+<!-- ✅ GOOD - 使用 CDN -->
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+<!-- ❌ BAD - 引入大型框架 -->
+<script src="react.js"></script>
+```

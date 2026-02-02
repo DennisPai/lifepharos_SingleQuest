@@ -1,0 +1,219 @@
+---
+description: Node.js 後端開發規範，包含 API、錯誤處理和安全性最佳實踐
+globs: backend/**/*.js
+alwaysApply: false
+---
+
+# Node.js 後端開發規範
+
+## ✅ 核心原則
+
+1. **所有 API endpoint 必須包含資料驗證**
+2. **使用 async/await 處理異步操作**
+3. **錯誤必須記錄完整堆疊資訊**
+4. **敏感資訊（API key、token）使用環境變數**
+
+## 🔍 資料驗證
+
+### 使用驗證工具類
+
+```javascript
+// ❌ BAD - 沒有驗證
+router.post('/submit', async (req, res) => {
+  const { taskId, userId, question, selectedNumbers } = req.body;
+  const result = await processData(taskId, userId, question, selectedNumbers);
+  res.json(result);
+});
+
+// ✅ GOOD - 完整驗證
+router.post('/submit', async (req, res, next) => {
+  try {
+    const { taskId, userId, question, selectedNumbers } = req.body;
+    
+    // 使用驗證工具
+    Validator.validateTaskId(taskId);
+    Validator.validateUserId(userId);
+    Validator.validateQuestion(question);
+    Validator.validateSelectedNumbers(selectedNumbers);
+    
+    const result = await processData(taskId, userId, question, selectedNumbers);
+    res.json(result);
+  } catch (error) {
+    next(error); // 傳遞給錯誤處理中間件
+  }
+});
+```
+
+## ⚠️ 錯誤處理
+
+### 分層錯誤處理
+
+```javascript
+// ✅ GOOD - 服務層拋出詳細錯誤
+async function generateImage(question, pieces) {
+  try {
+    const canvas = createCanvas(5000, 5000);
+    // ... 圖片生成邏輯
+    return canvas.toBuffer('image/png');
+  } catch (error) {
+    logger.error('圖片生成失敗:', error);
+    throw new Error('圖片生成失敗');
+  }
+}
+
+// ✅ GOOD - 路由層處理錯誤
+router.post('/submit', async (req, res, next) => {
+  try {
+    const imageBuffer = await generateImage(question, pieces);
+    // ...
+  } catch (error) {
+    // 傳遞給全域錯誤處理
+    next(error);
+  }
+});
+
+// ✅ GOOD - 全域錯誤處理返回友善訊息
+function errorHandler(err, req, res, next) {
+  logger.error('錯誤發生:', {
+    message: err.message,
+    stack: err.stack,
+    url: req.url
+  });
+  
+  // 生產環境不暴露詳細錯誤
+  const message = process.env.NODE_ENV === 'production' 
+    ? '系統暫時無法處理，請稍後再試'
+    : err.message;
+  
+  res.status(err.statusCode || 500).json({
+    error: err.name,
+    message: message
+  });
+}
+```
+
+## 🔐 安全性
+
+### 環境變數管理
+
+```javascript
+// ❌ BAD - 硬編碼敏感資訊
+const client = new MessagingApiClient({
+  channelAccessToken: 'YQANihoFPndvkey9J5aZvQgd...'
+});
+
+// ✅ GOOD - 使用環境變數
+const client = new MessagingApiClient({
+  channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN
+});
+
+// ✅ GOOD - 驗證環境變數存在
+if (!process.env.LINE_CHANNEL_ACCESS_TOKEN) {
+  throw new Error('LINE_CHANNEL_ACCESS_TOKEN 環境變數未設定');
+}
+```
+
+### Rate Limiting
+
+```javascript
+// ✅ GOOD - 使用 express-rate-limit
+const rateLimit = require('express-rate-limit');
+
+const limiter = rateLimit({
+  windowMs: 60 * 1000, // 1 分鐘
+  max: 10, // 限制 10 次請求
+  message: {
+    error: 'Too many requests',
+    message: '請求過於頻繁，請稍後再試'
+  }
+});
+
+app.use('/api/', limiter);
+```
+
+## 🔄 異步操作
+
+### 使用 async/await
+
+```javascript
+// ❌ BAD - 回調地獄
+function submitDivination(data, callback) {
+  generateImage(data, (err, buffer) => {
+    if (err) return callback(err);
+    uploadImage(buffer, (err, url) => {
+      if (err) return callback(err);
+      updateSheets(data, (err) => {
+        if (err) return callback(err);
+        callback(null, url);
+      });
+    });
+  });
+}
+
+// ✅ GOOD - async/await
+async function submitDivination(data) {
+  const imageBuffer = await generateImage(data);
+  const imageUrl = await uploadImage(imageBuffer);
+  
+  // 並行處理
+  await Promise.all([
+    updateSheets(data),
+    pushLineMessage(data.userId, imageUrl)
+  ]);
+  
+  return imageUrl;
+}
+```
+
+## 📊 日誌記錄
+
+### 使用結構化日誌
+
+```javascript
+// ❌ BAD - 簡單的 console.log
+console.log('User submitted:', userId);
+
+// ✅ GOOD - 結構化日誌
+logger.info('用戶提交抽卦', {
+  taskId: data.taskId,
+  userId: data.userId,
+  questionLength: data.question.length,
+  timestamp: new Date().toISOString()
+});
+
+// ✅ GOOD - 錯誤日誌包含完整資訊
+logger.error('圖片上傳失敗', {
+  error: error.message,
+  stack: error.stack,
+  taskId: data.taskId,
+  imageSize: buffer.length
+});
+```
+
+## 🔧 Google Sheets 整合
+
+### 透過 n8n 操作
+
+```javascript
+// ✅ GOOD - 使用 n8n 客戶端
+class N8nClient {
+  async updateBoardUsage(taskId, positions) {
+    try {
+      const response = await axios.post(
+        `${this.baseUrl}/webhook/update-board`,
+        { taskId, positions },
+        { timeout: 10000 }
+      );
+      
+      return response.data;
+    } catch (error) {
+      logger.error('N8n 更新失敗:', error.message);
+      throw new Error('Failed to update board usage');
+    }
+  }
+}
+
+// ❌ BAD - 直接操作 Google Sheets API
+// 不要在後端直接使用 Google Sheets API，
+// 應該透過 n8n 進行操作
+```

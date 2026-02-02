@@ -1,0 +1,381 @@
+/* 全域樣式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Microsoft YaHei", 
+                 "微軟正黑體", "Segoe UI", sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background-color: white;
+}
+
+/* 頁面通用樣式 */
+.page {
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.page-header {
+    margin-bottom: 30px;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #3B6E98;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.page-title.warning {
+    color: #FF9800;
+}
+
+.divider {
+    width: 80px;
+    height: 3px;
+    background-color: #3B6E98;
+    margin: 0 auto;
+}
+
+.page-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Loading 動畫 */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    min-height: 300px;
+}
+
+.spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3B6E98;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    font-size: 18px;
+    color: #666;
+    font-weight: 500;
+}
+
+.loading-subtext {
+    font-size: 14px;
+    color: #999;
+}
+
+/* 輸入框樣式 */
+.input-field {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    border: 2px solid #3B6E98;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s;
+    font-family: inherit;
+    resize: none;
+}
+
+.input-field:focus {
+    border-color: #2a5474;
+}
+
+.input-field::placeholder {
+    color: #999;
+}
+
+/* 字數計數器 */
+.char-counter {
+    text-align: right;
+    color: #666;
+    font-size: 14px;
+    margin-top: -10px;
+}
+
+/* 說明文字 */
+.instruction-text {
+    color: #666;
+    font-size: 15px;
+    text-align: center;
+    line-height: 1.8;
+}
+
+.example-text {
+    color: #999;
+    font-size: 13px;
+}
+
+.info-text {
+    color: #666;
+    font-size: 15px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* 驗證訊息 */
+.validation-message {
+    font-size: 14px;
+    min-height: 20px;
+    padding: 5px 10px;
+}
+
+.validation-message.success {
+    color: #4CAF50;
+}
+
+.validation-message.error {
+    color: #f44336;
+}
+
+/* 參考圖片 */
+.reference-image-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.reference-label {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.reference-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 按鈕樣式 */
+.btn {
+    padding: 15px 30px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    outline: none;
+    width: 100%;
+}
+
+.btn-primary {
+    background-color: #3B6E98;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #2a5474;
+}
+
+.btn-primary:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background-color: #999;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #777;
+}
+
+/* 按鈕組 */
+.button-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+/* 棋子容器 */
+.pieces-container {
+    position: relative;
+    width: 100%;
+    max-width: 350px;
+    height: 350px;
+    margin: 20px auto;
+}
+
+.piece {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.piece.red {
+    border: 3px solid #FF0000;
+    color: #FF0000;
+}
+
+.piece.black {
+    border: 3px solid #000000;
+    color: #000000;
+}
+
+/* 棋子位置 - 十字排列 */
+.piece-center {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.piece-left {
+    top: 50%;
+    left: 15%;
+    transform: translate(-50%, -50%);
+}
+
+.piece-right {
+    top: 50%;
+    left: 85%;
+    transform: translate(-50%, -50%);
+}
+
+.piece-top {
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.piece-bottom {
+    top: 80%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* 問題顯示 */
+.result-question {
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.question-label {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.question-text {
+    font-size: 16px;
+    color: #333;
+    font-weight: 500;
+    word-wrap: break-word;
+}
+
+.result-notice {
+    text-align: center;
+    color: #666;
+    font-size: 15px;
+    margin: 10px 0;
+}
+
+/* 錯誤頁面 */
+.error-content {
+    text-align: center;
+    justify-content: center;
+}
+
+.error-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+}
+
+.error-title {
+    font-size: 24px;
+    color: #f44336;
+    margin-bottom: 15px;
+}
+
+.error-text {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 30px;
+    line-height: 1.8;
+}
+
+/* 響應式設計 */
+@media (max-width: 400px) {
+    .page {
+        padding: 15px;
+    }
+
+    .page-title {
+        font-size: 20px;
+    }
+
+    .pieces-container {
+        max-width: 300px;
+        height: 300px;
+    }
+
+    .piece {
+        width: 60px;
+        height: 60px;
+        font-size: 30px;
+    }
+}
+
+/* 隱藏類別 */
+.hidden {
+    display: none !important;
+}
+
+/* 動畫效果 */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

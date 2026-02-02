@@ -3,8 +3,8 @@ const CONFIG = {
   // LIFF ID（從 line_LIFF.md）
   LIFF_ID: '2008987238-9DfMVogB',
   
-  // 後端 API Base URL（部署後更新）
-  API_BASE_URL: 'https://your-backend.zeabur.app', // TODO: 部署後更新
+  // 後端 API Base URL
+  API_BASE_URL: 'https://lifepharos-singlequest-backend.zeabur.app'
   
   // 問題長度限制
   MAX_QUESTION_LENGTH: 30,

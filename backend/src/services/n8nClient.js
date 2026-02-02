@@ -62,18 +62,20 @@ class N8nClient {
    * 更新棋盤使用記錄
    * @param {string} taskId - 任務ID
    * @param {Array<number>} positions - 選擇的位置 [9, 19, 21, 23, 32]
+   * @param {string} question - 客戶輸入的問題
    * @returns {Promise<Object>} 更新結果
    */
-  async updateBoardUsage(taskId, positions) {
+  async updateBoardUsage(taskId, positions, question) {
     try {
       const url = `${this.baseUrl}${config.n8n.updateBoardPath}`;
       
       logger.debug(`Calling n8n UPDATE board: ${url}`);
       logger.debug('Positions:', positions);
+      logger.debug('Question:', question);
       
       const response = await axios.post(
         url,
-        { taskId, positions },
+        { taskId, positions, question },
         { 
           timeout: this.timeout,
           headers: {

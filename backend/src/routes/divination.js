@@ -40,8 +40,8 @@ router.get('/check', async (req, res, next) => {
     if (boardData.used) {
       logger.info(`Task ${taskId} is already used`);
       
-      // 解析之前的結果
-      const previousResult = parsePreviousResult(boardData.result);
+      // 解析之前的結果（傳入完整的 boardData）
+      const previousResult = parsePreviousResult(boardData);
       
       return res.json({
         canStart: false,
@@ -110,8 +110,8 @@ router.post('/submit', async (req, res, next) => {
     // 並行處理：更新 Google Sheets 和推送 LINE 訊息
     logger.info('Processing in parallel...');
     await Promise.all([
-      // 更新 Google Sheets
-      n8nClient.updateBoardUsage(taskId, selectedNumbers),
+      // 更新 Google Sheets（包含問題）
+      n8nClient.updateBoardUsage(taskId, selectedNumbers, question),
       
       // 推送 LINE 訊息
       lineBot.pushDivinationResult(userId, imageUrl, question)
@@ -134,11 +134,11 @@ router.post('/submit', async (req, res, next) => {
 
 /**
  * 解析之前的結果
- * @param {string} result - 結果字串（例如："士、炮、相、帥、士"）
+ * @param {Object} boardData - 從 n8n 返回的完整棋盤資料
  * @returns {Object} 解析後的結果
  */
-function parsePreviousResult(result) {
-  if (!result) {
+function parsePreviousResult(boardData) {
+  if (!boardData || !boardData.result) {
     return {
       question: '',
       pieces: [],
@@ -147,15 +147,17 @@ function parsePreviousResult(result) {
   }
 
   // 分割棋子
-  const pieceNames = result.split('、');
+  const pieceNames = boardData.result.split('、');
   const pieces = pieceNames.map(name => ({
     name,
     color: config.business.redPieces.includes(name) ? 'red' : 'black'
   }));
 
-  // TODO: 如果需要顯示之前的問題和圖片，需要從其他地方獲取
+  // 從"已使用"欄位讀取問題（n8n 會返回 usedValue 欄位）
+  const question = boardData.usedValue || '（之前的問題）';
+
   return {
-    question: '（之前的問題）',
+    question,
     pieces,
     imageUrl: null
   };

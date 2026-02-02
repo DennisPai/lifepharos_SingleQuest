@@ -1,4 +1,4 @@
-const { MessagingApiClient } = require('@line/bot-sdk');
+const sdk = require('@line/bot-sdk');
 const config = require('../config');
 const logger = require('../utils/logger');
 
@@ -8,14 +8,14 @@ const logger = require('../utils/logger');
 class LineBot {
   constructor() {
     // 主帳號 client
-    this.mainClient = new MessagingApiClient({
+    this.mainClient = new sdk.messagingApi.MessagingApiClient({
       channelAccessToken: config.line.channelAccessToken
     });
 
     // 助手帳 client（用於管理員通知）
     this.adminClient = null;
     if (config.admin.lineToken) {
-      this.adminClient = new MessagingApiClient({
+      this.adminClient = new sdk.messagingApi.MessagingApiClient({
         channelAccessToken: config.admin.lineToken
       });
     }

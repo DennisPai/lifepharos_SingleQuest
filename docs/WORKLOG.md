@@ -576,3 +576,87 @@ curl -X POST http://your-n8n-url/webhook/get-board \
 - 📋 文檔數量：15+ 個 Markdown 文件
 
 **GitHub Repository 已就緒，可以部署到 Zeabur！**
+
+---
+
+## 2026-02-02 - 修復 Zeabur 部署問題
+
+### 添加 Dockerfile 解決 canvas 依賴問題
+
+**時間**: 完成
+
+**問題**:
+Zeabur 部署後端時，`canvas` 套件安裝失敗，錯誤訊息：
+```
+Package 'pangocairo', required by 'virtual:world', not found
+gyp: Call to 'pkg-config pangocairo --libs' returned exit status 1
+```
+
+**原因**:
+`node-canvas` 需要編譯本地擴展，需要系統級依賴：
+- `libcairo2-dev` - Cairo 圖形庫
+- `libpango1.0-dev` - Pango 文字渲染
+- `libjpeg-dev` - JPEG 支援
+- `libgif-dev` - GIF 支援
+- 其他構建工具
+
+**解決方案**:
+
+1. ✅ **創建 backend/Dockerfile**
+   ```dockerfile
+   FROM node:20-bullseye-slim
+   
+   # 安裝 canvas 所需的系統依賴
+   RUN apt-get update && apt-get install -y \
+       build-essential \
+       libcairo2-dev \
+       libpango1.0-dev \
+       libjpeg-dev \
+       libgif-dev \
+       librsvg2-dev \
+       pkg-config \
+       python3
+   
+   # 安裝 npm 依賴
+   RUN npm install --production
+   
+   # 啟動應用
+   CMD ["npm", "start"]
+   ```
+
+2. ✅ **創建 backend/.dockerignore**
+   - 排除 `node_modules`、`.env` 等不必要文件
+   - 減少 Docker 映像大小
+
+3. ✅ **創建 frontend/zeabur.json**
+   ```json
+   {
+     "type": "static",
+     "outputDirectory": ".",
+     "installCommand": "",
+     "buildCommand": ""
+   }
+   ```
+   - 明確告訴 Zeabur 這是靜態網站
+
+**提交記錄**:
+- Commit: `81e1763`
+- 訊息: "[修復] 添加 Dockerfile 解決 canvas 依賴問題"
+- 新增文件：
+  - `backend/Dockerfile`
+  - `backend/.dockerignore`
+  - `frontend/zeabur.json`
+
+**部署說明**:
+1. Zeabur 會自動檢測 `Dockerfile`
+2. 使用 Docker 構建映像（而非直接 npm install）
+3. 所有系統依賴會在構建時安裝
+4. canvas 套件能正確編譯
+
+**測試建議**:
+1. 在 Zeabur 重新部署後端服務
+2. 檢查構建日誌，確認 Dockerfile 被使用
+3. 驗證 `/health` 端點正常
+4. 測試圖片生成功能（`/api/divination/submit`）
+
+**專案狀態**: ✅ **部署問題已修復，可重新部署！**

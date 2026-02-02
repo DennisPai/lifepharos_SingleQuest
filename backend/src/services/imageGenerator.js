@@ -96,7 +96,7 @@ class ImageGenerator {
    * @param {string} question
    */
   drawQuestion(ctx, question) {
-    ctx.font = `bold ${this.questionFontSize}px "Microsoft YaHei", "微軟正黑體", sans-serif`;
+    ctx.font = `bold ${this.questionFontSize}px "Noto Sans CJK TC", "WenQuanYi Zen Hei", "Microsoft YaHei", sans-serif`;
     ctx.fillStyle = this.colors.text;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
@@ -170,7 +170,7 @@ class ImageGenerator {
       ctx.stroke();
 
       // 繪製棋子文字
-      ctx.font = `bold ${this.pieceFontSize}px "Microsoft YaHei", "微軟正黑體", sans-serif`;
+      ctx.font = `bold ${this.pieceFontSize}px "Noto Sans CJK TC", "WenQuanYi Zen Hei", "Microsoft YaHei", sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillStyle = isRed ? this.colors.red : this.colors.black;

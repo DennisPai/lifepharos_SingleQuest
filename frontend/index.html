@@ -25,6 +25,12 @@
                 <div class="divider"></div>
             </div>
             <div class="page-content">
+                <div class="question-tips" style="background-color: #F5F5F5; padding: 15px; border-radius: 8px; margin-bottom: 15px; font-size: 14px; line-height: 1.6;">
+                    <p style="margin: 0 0 10px 0; font-weight: bold; color: #3B6E98;">※ 問題需要有明確答案或方向</p>
+                    <p style="margin: 5px 0; color: #333;">✔️ 請問我跟某某某的相處如何？</p>
+                    <p style="margin: 5px 0; color: #333;">✔️ 請問這個工作對我有沒有利？</p>
+                    <p style="margin: 5px 0; color: #999;">❌ 請問我之後適合做什麼？</p>
+                </div>
                 <textarea
                     id="input-question"
                     class="input-field"
@@ -46,23 +52,34 @@
                 <div class="divider"></div>
             </div>
             <div class="page-content">
-                <p class="instruction-text">
-                    請輸入5個數字，用逗號分隔<br>
-                    <span class="example-text">(例如：9,19,21,23,32)</span>
+                <p class="meditation-text" style="text-align: center; margin-bottom: 10px; color: #333; font-size: 16px;">
+                    深呼吸三次，讓自己沉靜下來
                 </p>
-                <input
-                    type="text"
-                    id="input-numbers"
-                    class="input-field"
-                    placeholder="9,19,21,23,32"
-                />
-                <div id="number-validation" class="validation-message"></div>
+                <p class="prayer-text" style="text-align: center; margin-bottom: 20px; color: #3B6E98; font-size: 15px; font-weight: bold;">
+                    心裡默念：指導靈/神明，請問<span id="question-reminder"></span>
+                </p>
                 
-                <!-- 可選：顯示棋盤參考圖 -->
-                <div class="reference-image-container" style="display: none;">
-                    <p class="reference-label">參考棋盤：</p>
-                    <img src="assets/chessboard-reference.jpg" alt="棋盤參考圖" class="reference-image">
+                <!-- 顯示棋盤圖片 -->
+                <div class="chessboard-container" style="text-align: center; margin: 20px 0;">
+                    <img src="https://fateforge.lifepharos.com/wp-content/uploads/2025/02/象棋數字盤-e1738425815689.jpg" 
+                         alt="象棋數字盤" 
+                         class="chessboard-image"
+                         style="width: 100%; max-width: 400px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                 </div>
+                
+                <p class="instruction-text" style="text-align: center; font-size: 14px; color: #666; margin-bottom: 15px;">
+                    請選擇你想抽取的棋子的位置（填數字）
+                </p>
+                
+                <div class="number-inputs-container" style="display: flex; justify-content: space-between; gap: 8px; margin-bottom: 15px;">
+                    <input type="number" id="number-1" class="number-input" placeholder="第1個" min="1" max="32" style="flex: 1; padding: 10px; text-align: center; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+                    <input type="number" id="number-2" class="number-input" placeholder="第2個" min="1" max="32" style="flex: 1; padding: 10px; text-align: center; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+                    <input type="number" id="number-3" class="number-input" placeholder="第3個" min="1" max="32" style="flex: 1; padding: 10px; text-align: center; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+                    <input type="number" id="number-4" class="number-input" placeholder="第4個" min="1" max="32" style="flex: 1; padding: 10px; text-align: center; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+                    <input type="number" id="number-5" class="number-input" placeholder="第5個" min="1" max="32" style="flex: 1; padding: 10px; text-align: center; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
+                </div>
+                
+                <div id="number-validation" class="validation-message"></div>
 
                 <div class="button-group">
                     <button id="btn-back-numbers" class="btn btn-secondary">返回</button>

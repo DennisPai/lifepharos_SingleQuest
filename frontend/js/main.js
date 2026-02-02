@@ -93,27 +93,35 @@ const App = {
     
     btnNextQuestion.addEventListener('click', () => {
       this.state.question = questionInput.value.trim();
+      // 在數字頁面顯示問題
+      const questionReminder = document.getElementById('question-reminder');
+      if (questionReminder) {
+        questionReminder.textContent = this.state.question;
+      }
       this.showPage(this.PAGES.INPUT_NUMBERS);
     });
     
-    // 數字輸入頁面
-    const numbersInput = document.getElementById('input-numbers');
+    // 數字輸入頁面 - 使用5個獨立輸入框
+    const numberInputs = [
+      document.getElementById('number-1'),
+      document.getElementById('number-2'),
+      document.getElementById('number-3'),
+      document.getElementById('number-4'),
+      document.getElementById('number-5')
+    ];
     const btnSubmit = document.getElementById('btn-submit-divination');
     const btnBackNumbers = document.getElementById('btn-back-numbers');
     
-    numbersInput.addEventListener('input', () => {
-      const validation = this.validateNumbers(numbersInput.value);
-      const validationEl = document.getElementById('number-validation');
-      
-      if (validation.valid) {
-        validationEl.textContent = '✅ 格式正確';
-        validationEl.className = 'validation-message success';
-        btnSubmit.disabled = false;
-      } else {
-        validationEl.textContent = validation.error || '';
-        validationEl.className = validation.error ? 'validation-message error' : 'validation-message';
-        btnSubmit.disabled = true;
-      }
+    // 監聽所有數字輸入框
+    numberInputs.forEach((input, index) => {
+      input.addEventListener('input', () => {
+        this.validateNumberInputs();
+        
+        // 自動跳到下一個輸入框
+        if (input.value && index < numberInputs.length - 1) {
+          numberInputs[index + 1].focus();
+        }
+      });
     });
     
     btnBackNumbers.addEventListener('click', () => {
@@ -140,46 +148,65 @@ const App = {
   },
 
   /**
-   * 驗證數字輸入
-   * @param {string} input - 用戶輸入
-   * @returns {Object} 驗證結果 {valid: boolean, numbers: Array, error: string}
+   * 驗證所有數字輸入框
    */
-  validateNumbers(input) {
-    if (!input || input.trim() === '') {
-      return { valid: false, error: '' };
+  validateNumberInputs() {
+    const numberInputs = [
+      document.getElementById('number-1'),
+      document.getElementById('number-2'),
+      document.getElementById('number-3'),
+      document.getElementById('number-4'),
+      document.getElementById('number-5')
+    ];
+    
+    const btnSubmit = document.getElementById('btn-submit-divination');
+    const validationEl = document.getElementById('number-validation');
+    
+    // 收集所有數字
+    const numbers = numberInputs.map(input => input.value.trim()).filter(v => v !== '');
+    
+    // 檢查是否都填寫了
+    if (numbers.length < 5) {
+      validationEl.textContent = numbers.length === 0 ? '' : `請填寫全部 5 個數字（已填 ${numbers.length}/5）`;
+      validationEl.className = 'validation-message';
+      btnSubmit.disabled = true;
+      return { valid: false };
     }
     
-    // 分割數字
-    const numbers = input.split(',').map(n => n.trim()).filter(n => n !== '');
+    // 解析數字
+    const parsedNumbers = numbers.map(n => parseInt(n, 10));
     
-    // 檢查數量
-    if (numbers.length !== CONFIG.REQUIRED_NUMBERS_COUNT) {
-      return { valid: false, error: `必須正好 ${CONFIG.REQUIRED_NUMBERS_COUNT} 個數字` };
+    // 檢查是否都是有效數字
+    if (parsedNumbers.some(isNaN)) {
+      validationEl.textContent = '❌ 請輸入有效的數字';
+      validationEl.className = 'validation-message error';
+      btnSubmit.disabled = true;
+      return { valid: false };
     }
     
-    // 檢查每個數字
-    const parsedNumbers = [];
-    for (const num of numbers) {
-      const parsed = parseInt(num, 10);
-      
-      if (isNaN(parsed)) {
-        return { valid: false, error: '請輸入有效的數字' };
-      }
-      
-      if (parsed < CONFIG.NUMBER_RANGE.min || parsed > CONFIG.NUMBER_RANGE.max) {
-        return { valid: false, error: `數字範圍必須在 ${CONFIG.NUMBER_RANGE.min}-${CONFIG.NUMBER_RANGE.max} 之間` };
-      }
-      
-      parsedNumbers.push(parsed);
+    // 檢查範圍
+    const outOfRange = parsedNumbers.filter(n => n < CONFIG.NUMBER_RANGE.min || n > CONFIG.NUMBER_RANGE.max);
+    if (outOfRange.length > 0) {
+      validationEl.textContent = `❌ 數字必須在 ${CONFIG.NUMBER_RANGE.min}-${CONFIG.NUMBER_RANGE.max} 之間`;
+      validationEl.className = 'validation-message error';
+      btnSubmit.disabled = true;
+      return { valid: false };
     }
     
     // 檢查重複
     const uniqueNumbers = new Set(parsedNumbers);
     if (uniqueNumbers.size !== parsedNumbers.length) {
-      return { valid: false, error: '數字不可重複' };
+      validationEl.textContent = '❌ 數字不可重複';
+      validationEl.className = 'validation-message error';
+      btnSubmit.disabled = true;
+      return { valid: false };
     }
     
-    return { valid: true, numbers: parsedNumbers, error: null };
+    // 全部通過
+    validationEl.textContent = '✅ 格式正確';
+    validationEl.className = 'validation-message success';
+    btnSubmit.disabled = false;
+    return { valid: true, numbers: parsedNumbers };
   },
 
   /**
@@ -193,15 +220,24 @@ const App = {
       // 顯示處理中頁面
       this.showPage(this.PAGES.PROCESSING);
       
-      // 獲取數字
-      const numbersInput = document.getElementById('input-numbers').value;
-      const validation = this.validateNumbers(numbersInput);
+      // 從5個獨立輸入框獲取數字
+      const numberInputs = [
+        document.getElementById('number-1'),
+        document.getElementById('number-2'),
+        document.getElementById('number-3'),
+        document.getElementById('number-4'),
+        document.getElementById('number-5')
+      ];
       
+      const numbers = numberInputs.map(input => parseInt(input.value.trim(), 10));
+      
+      // 最終驗證
+      const validation = this.validateNumberInputs();
       if (!validation.valid) {
-        throw new Error(validation.error);
+        throw new Error('數字輸入有誤，請重新檢查');
       }
       
-      this.state.selectedNumbers = validation.numbers;
+      this.state.selectedNumbers = numbers;
       
       // 提交到後端
       const result = await API.submitDivination({

@@ -4,7 +4,7 @@ FROM node:20-bullseye-slim
 # 設定工作目錄
 WORKDIR /app
 
-# 安裝 canvas 所需的系統依賴
+# 安裝 canvas 所需的系統依賴和中文字體
 RUN apt-get update && apt-get install -y \
     build-essential \
     libcairo2-dev \
@@ -14,6 +14,11 @@ RUN apt-get update && apt-get install -y \
     librsvg2-dev \
     pkg-config \
     python3 \
+    fonts-noto-cjk \
+    fonts-wqy-zenhei \
+    fonts-wqy-microhei \
+    fontconfig \
+    && fc-cache -fv \
     && rm -rf /var/lib/apt/lists/*
 
 # 複製 package.json 和 package-lock.json（或 yarn.lock）
